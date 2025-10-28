@@ -1,0 +1,5 @@
+{
+  "name": "Anàlisi de Vídeo amb Gemini AI",
+  "description": "Una aplicació web que demostra les capacitats d'anàlisi de vídeo utilitzant Google Gemini AI, incloent l'extracció de frames i descripcions visuals amb IA.",
+  "requestFramePermissions": []
+}
