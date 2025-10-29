@@ -3,10 +3,11 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import VideoUploader from './components/VideoUploader';
 import AnalysisResults from './components/AnalysisResults';
 import LoadingSpinner from './components/LoadingSpinner';
+import ApiKeyModal from './components/ApiKeyModal';
 import { extractFrames } from './services/videoProcessing';
 import { generateStructuredVideoAnalysis, StructuredVideoAnalysis } from './services/geminiService';
 import { VideoAnalysisResult, AppStatus } from './types';
-import { FRAME_EXTRACTION_CONFIG } from './constants';
+import { FRAME_EXTRACTION_CONFIG, getApiKey } from './constants';
 
 const App: React.FC = () => {
   const [videoFile, setVideoFile] = useState<File | null>(null);
@@ -14,6 +15,16 @@ const App: React.FC = () => {
   const [structuredAnalysis, setStructuredAnalysis] = useState<StructuredVideoAnalysis | null>(null); // Nou estat
   const [appStatus, setAppStatus] = useState<AppStatus>(AppStatus.IDLE);
   const [error, setError] = useState<string | null>(null);
+  const [isApiKeyModalOpen, setIsApiKeyModalOpen] = useState<boolean>(false);
+
+  // Comprovar si hi ha API key configurada al muntatge
+  useEffect(() => {
+    const savedKey = getApiKey();
+    if (!savedKey) {
+      // Mostrar el modal si no hi ha clau API
+      setIsApiKeyModalOpen(true);
+    }
+  }, []);
 
   // Using useRef to ensure the latest state is captured for `analyzeVideo` without
   // adding `analysisResult`, `appStatus` to its dependency array, preventing re-creation.
@@ -61,14 +72,29 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-indigo-200 p-4 md:p-8 flex flex-col items-center">
-      <header className="w-full max-w-4xl text-center py-6 mb-8">
-        <h1 className="text-4xl font-extrabold text-blue-800 drop-shadow-lg">
-          <span role="img" aria-label="càmera" className="mr-2">🎥</span>
-          Anàlisi de Vídeo amb Gemini AI
-        </h1>
-        <p className="text-lg text-blue-700 mt-2 font-light">
-          Puja un vídeo per obtenir coneixements detallats i estructurats basats en IA sobre el seu contingut visual.
-        </p>
+      <header className="w-full max-w-4xl py-6 mb-8">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex-1"></div>
+          <button
+            onClick={() => setIsApiKeyModalOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-white hover:bg-blue-50 border border-blue-300 rounded-lg text-blue-700 text-sm font-medium transition-colors shadow-sm"
+            title="Configurar clau API"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
+            </svg>
+            <span>Clau API</span>
+          </button>
+        </div>
+        <div className="text-center">
+          <h1 className="text-4xl font-extrabold text-blue-800 drop-shadow-lg">
+            <span role="img" aria-label="càmera" className="mr-2">🎥</span>
+            Anàlisi de Vídeo amb Gemini AI
+          </h1>
+          <p className="text-lg text-blue-700 mt-2 font-light">
+            Puja un vídeo per obtenir coneixements detallats i estructurats basats en IA sobre el seu contingut visual.
+          </p>
+        </div>
       </header>
 
       <main className="flex-grow w-full max-w-4xl">
@@ -89,6 +115,11 @@ const App: React.FC = () => {
       <footer className="w-full max-w-4xl text-center py-6 mt-8 border-t border-blue-300 text-blue-700 text-sm">
         Impulsat per Google Gemini AI i Tailwind CSS
       </footer>
+
+      <ApiKeyModal
+        isOpen={isApiKeyModalOpen}
+        onClose={() => setIsApiKeyModalOpen(false)}
+      />
     </div>
   );
 };

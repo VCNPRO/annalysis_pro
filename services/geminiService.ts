@@ -1,6 +1,6 @@
 // services/geminiService.ts
 import { GoogleGenAI, Type } from '@google/genai';
-import { API_KEY, GEMINI_MODEL_NAME } from '../constants';
+import { getApiKey, GEMINI_MODEL_NAME } from '../constants';
 import { GenerateContentParameters, Part } from '@google/genai';
 
 /**
@@ -23,10 +23,11 @@ export interface StructuredVideoAnalysis {
  * @throws {Error} Si la API_KEY no està configurada.
  */
 const getGeminiClient = (): GoogleGenAI => {
-  if (!API_KEY) {
-    throw new Error('La API_KEY no està configurada. Si us plau, estableix la variable d\'entorn API_KEY.');
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    throw new Error('La API_KEY no està configurada. Si us plau, configura la teva clau API de Gemini.');
   }
-  return new GoogleGenAI({ apiKey: API_KEY });
+  return new GoogleGenAI({ apiKey });
 };
 
 /**
