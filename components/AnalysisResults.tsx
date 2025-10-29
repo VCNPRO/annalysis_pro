@@ -20,14 +20,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-gray-200 py-3">
+    <div className="border-b border-slate-700 py-3">
       <button
-        className="flex justify-between items-center w-full text-left font-semibold text-gray-800 hover:text-blue-600 transition-colors duration-200 focus:outline-none"
+        className="flex justify-between items-center w-full text-left font-semibold text-slate-200 hover:text-blue-400 transition-colors duration-200 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-lg">{title}</span>
+        <span className="text-sm">{title}</span>
         <svg
-          className={`w-5 h-5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -36,7 +36,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
         </svg>
       </button>
-      {isOpen && <div className="mt-3 pl-2 border-l-2 border-blue-200">{children}</div>}
+      {isOpen && <div className="mt-3 pl-2 border-l-2 border-blue-500">{children}</div>}
     </div>
   );
 };
@@ -73,25 +73,25 @@ const RenderJsonContent: React.FC<{ jsonString: string; title: string }> = ({ js
 const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, structuredAnalysis, error }) => {
   if (error) {
     return (
-      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-md w-full max-w-3xl mx-auto shadow-md">
+      <div className="bg-red-900/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg shadow-md">
         <strong className="font-bold">Error!</strong>
-        <p className="block sm:inline ml-2">{error}</p>
-        <p className="text-sm mt-2">Assegura't que la teva clau API sigui correcta i accessible, i torna a intentar-ho.</p>
+        <p className="block sm:inline ml-2 text-sm">{error}</p>
+        <p className="text-xs mt-2 text-red-300">Assegura't que la teva clau API sigui correcta i accessible.</p>
       </div>
     );
   }
 
   if (!results && !structuredAnalysis) {
     return (
-      <div className="text-center text-gray-500 p-4">
-        Puja un vídeo per veure'n els resultats de l'anàlisi aquí.
+      <div className="text-center text-slate-500 p-4 bg-slate-800/50 rounded-lg border border-slate-700">
+        <p className="text-sm">Analitza un vídeo per veure els resultats</p>
       </div>
     );
   }
 
   return (
-    <div className="p-6 bg-white rounded-lg shadow-md w-full max-w-3xl mx-auto mt-8">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-blue-700">Resultats de l'Anàlisi</h2>
+    <div className="p-6 bg-slate-800 rounded-lg shadow-xl border border-slate-700 max-h-[calc(100vh-12rem)] overflow-y-auto">
+      <h2 className="text-lg font-semibold mb-4 text-slate-100 border-b border-slate-700 pb-2">📊 Resultats de l'Anàlisi</h2>
 
       {results?.frames.length > 0 && (
         <CollapsibleSection title="Frames clau extrets" defaultOpen={true}>
