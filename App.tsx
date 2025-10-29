@@ -4,6 +4,8 @@ import VideoUploader from './components/VideoUploader';
 import VideoPlayer from './components/VideoPlayer';
 import MetadataTimeline from './components/MetadataTimeline';
 import AnalysisResults from './components/AnalysisResults';
+import AnalysisStats from './components/AnalysisStats';
+import SearchAndExport from './components/SearchAndExport';
 import LoadingSpinner from './components/LoadingSpinner';
 import ApiKeyModal from './components/ApiKeyModal';
 import { extractFrames } from './services/videoProcessing';
@@ -125,9 +127,9 @@ const App: React.FC = () => {
 
         {/* Video Player & Analysis */}
         {videoFile && appStatus !== AppStatus.LOADING && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Column: Video Player & Timeline */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-7 space-y-4">
               <VideoPlayer
                 videoFile={videoFile}
                 onTimeUpdate={setCurrentTime}
@@ -156,8 +158,21 @@ const App: React.FC = () => {
               </button>
             </div>
 
-            {/* Right Column: Analysis Results */}
-            <div className="lg:col-span-1">
+            {/* Right Column: Stats, Search & Analysis */}
+            <div className="lg:col-span-5 space-y-4">
+              {/* Statistics */}
+              <AnalysisStats
+                structuredAnalysis={structuredAnalysis}
+                duration={duration}
+              />
+
+              {/* Search & Export */}
+              <SearchAndExport
+                structuredAnalysis={structuredAnalysis}
+                onSeekToResult={handleSeekFromTimeline}
+              />
+
+              {/* Detailed Analysis Results */}
               <AnalysisResults
                 results={analysisResult}
                 structuredAnalysis={structuredAnalysis}
