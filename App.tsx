@@ -13,6 +13,7 @@ import ProjectsManager from './components/ProjectsManager';
 import ConfidenceCharts from './components/ConfidenceCharts';
 import VideoComparison from './components/VideoComparison';
 import SettingsPanel from './components/SettingsPanel';
+import UserGuide from './components/UserGuide';
 import { extractFrames } from './services/videoProcessing';
 import { generateStructuredVideoAnalysis, StructuredVideoAnalysis } from './services/geminiService';
 import { VideoAnalysisResult, AppStatus } from './types';
@@ -39,6 +40,7 @@ const App: React.FC = () => {
   const [showProjectsSidebar, setShowProjectsSidebar] = useState<boolean>(false);
   const [showComparison, setShowComparison] = useState<boolean>(false);
   const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [showUserGuide, setShowUserGuide] = useState<boolean>(false);
   const [usedCache, setUsedCache] = useState<boolean>(false);
 
   // Comprovar si hi ha API key configurada al muntatge
@@ -176,19 +178,28 @@ const App: React.FC = () => {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <div className="text-2xl font-bold text-blue-500">🎬</div>
-              <div className="flex items-baseline gap-3">
-                <h1 className="text-xl font-bold text-slate-100 tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              <div className="flex items-baseline gap-2">
+                <h1 className="text-lg font-bold text-slate-100 tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                   annalysis pro
                 </h1>
-                <span className="text-sm text-slate-400 font-normal">
+                <span className="text-xs text-slate-500 font-normal">
                   trabajando para
                 </span>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <button
+                onClick={() => setShowUserGuide(true)}
+                className="p-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 transition-colors"
+                title="Guia d'usuari"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                </svg>
+              </button>
+              <button
                 onClick={() => setShowProjectsSidebar(!showProjectsSidebar)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
                 title="Els meus projectes"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -198,7 +209,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowComparison(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
                 title="Comparar vídeos"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -208,7 +219,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setShowSettings(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
                 title="Configuració"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -219,7 +230,7 @@ const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setIsApiKeyModalOpen(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                className="flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
                 title="Configurar clau API"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
@@ -372,6 +383,11 @@ const App: React.FC = () => {
       <SettingsPanel
         isOpen={showSettings}
         onClose={() => setShowSettings(false)}
+      />
+
+      <UserGuide
+        isOpen={showUserGuide}
+        onClose={() => setShowUserGuide(false)}
       />
     </div>
   );
