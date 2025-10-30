@@ -137,7 +137,7 @@ const ConfidenceCharts: React.FC<ConfidenceChartsProps> = ({ structuredAnalysis 
       {chartsData.categoryData.length > 0 && (
         <div className="bg-slate-900/50 rounded p-2">
           <h4 className="text-xs font-medium text-slate-300 mb-1.5">Confiança Mitjana per Categoria</h4>
-          <ResponsiveContainer width="100%" height={120}>
+          <ResponsiveContainer width="100%" height={100}>
             <PieChart>
               <Pie
                 data={chartsData.categoryData}
@@ -171,7 +171,7 @@ const ConfidenceCharts: React.FC<ConfidenceChartsProps> = ({ structuredAnalysis 
       {chartsData.objectsData.length > 0 && (
         <div className="bg-slate-900/50 rounded p-2">
           <h4 className="text-xs font-medium text-slate-300 mb-1.5">🔷 Confiança d'Objectes</h4>
-          <ResponsiveContainer width="100%" height={140}>
+          <ResponsiveContainer width="100%" height={100}>
             <BarChart data={chartsData.objectsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
               <XAxis
@@ -204,7 +204,7 @@ const ConfidenceCharts: React.FC<ConfidenceChartsProps> = ({ structuredAnalysis 
       {chartsData.actionsData.length > 0 && (
         <div className="bg-slate-900/50 rounded p-2">
           <h4 className="text-xs font-medium text-slate-300 mb-1.5">⚡ Confiança d'Accions</h4>
-          <ResponsiveContainer width="100%" height={120}>
+          <ResponsiveContainer width="100%" height={100}>
             <LineChart data={chartsData.actionsData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
               <XAxis
@@ -241,7 +241,7 @@ const ConfidenceCharts: React.FC<ConfidenceChartsProps> = ({ structuredAnalysis 
       {chartsData.distributionData.some(d => d.count > 0) && (
         <div className="bg-slate-900/50 rounded p-2">
           <h4 className="text-xs font-medium text-slate-300 mb-1.5">📈 Distribució</h4>
-          <ResponsiveContainer width="100%" height={120}>
+          <ResponsiveContainer width="100%" height={100}>
             <BarChart data={chartsData.distributionData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
               <XAxis dataKey="range" tick={{ fill: '#94a3b8' }} />
@@ -268,7 +268,7 @@ const ConfidenceCharts: React.FC<ConfidenceChartsProps> = ({ structuredAnalysis 
       {chartsData.textConfidenceData.length > 0 && (
         <div className="bg-slate-900/50 rounded p-2">
           <h4 className="text-xs font-medium text-slate-300 mb-1.5">📝 Confiança de Text</h4>
-          <ResponsiveContainer width="100%" height={120}>
+          <ResponsiveContainer width="100%" height={100}>
             <BarChart data={chartsData.textConfidenceData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#475569" />
               <XAxis dataKey="name" tick={{ fill: '#94a3b8' }} />

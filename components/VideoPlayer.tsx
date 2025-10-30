@@ -126,7 +126,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   return (
     <div className="bg-slate-900 rounded-md overflow-hidden shadow-lg border border-slate-700">
       {/* Video Display */}
-      <div className="relative bg-black aspect-video max-h-[400px]">
+      <div className="relative bg-black aspect-video max-h-[280px]">
         <video
           ref={videoRef}
           src={videoUrl}

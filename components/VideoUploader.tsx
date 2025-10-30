@@ -74,7 +74,7 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onVideoSelected, status }
         onDrop={handleDrop}
         onClick={handleClick}
         className={`
-          relative border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
+          relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer
           transition-all duration-200
           ${isDragging
             ? 'border-blue-500 bg-blue-500/10 scale-105'
@@ -83,15 +83,15 @@ const VideoUploader: React.FC<VideoUploaderProps> = ({ onVideoSelected, status }
           ${isLoading ? 'cursor-not-allowed opacity-50' : ''}
         `}
       >
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-3">
           {/* Icon */}
-          <div className={`text-6xl transition-transform ${isDragging ? 'scale-110' : ''}`}>
+          <div className={`text-4xl transition-transform ${isDragging ? 'scale-110' : ''}`}>
             {isLoading ? '⏳' : '🎬'}
           </div>
 
           {/* Text */}
           <div>
-            <h3 className="text-xl font-semibold text-slate-100 mb-2">
+            <h3 className="text-lg font-semibold text-slate-100 mb-2">
               {isLoading ? 'Processant vídeo...' :
                selectedFileName ? 'Canviar vídeo' :
                'Puja un vídeo per analitzar'}

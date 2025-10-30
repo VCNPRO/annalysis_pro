@@ -259,7 +259,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="px-3 sm:px-4 lg:px-6 py-4 relative">
+      <main className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-4 relative">
         {/* Dashboard View */}
         {currentView === 'dashboard' && (
           <Dashboard onNavigate={handleDashboardNavigate} />
