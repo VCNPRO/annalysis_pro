@@ -14,6 +14,7 @@ import ConfidenceCharts from './components/ConfidenceCharts';
 import VideoComparison from './components/VideoComparison';
 import SettingsPanel from './components/SettingsPanel';
 import UserGuide from './components/UserGuide';
+import Dashboard from './components/Dashboard';
 import { extractFrames } from './services/videoProcessing';
 import { generateStructuredVideoAnalysis, StructuredVideoAnalysis } from './services/geminiService';
 import { VideoAnalysisResult, AppStatus } from './types';
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showUserGuide, setShowUserGuide] = useState<boolean>(false);
   const [usedCache, setUsedCache] = useState<boolean>(false);
+  const [currentView, setCurrentView] = useState<'dashboard' | 'upload' | 'analysis'>('dashboard');
 
   // Comprovar si hi ha API key configurada al muntatge
   useEffect(() => {
@@ -141,6 +143,7 @@ const App: React.FC = () => {
 
   const handleVideoSelected = useCallback((file: File) => {
     setVideoFile(file);
+    setCurrentView('analysis');
     // Activar automàticament l'anàlisi en seleccionar el fitxer
     analyzeVideo(file);
   }, [analyzeVideo]);
@@ -164,10 +167,23 @@ const App: React.FC = () => {
     setCurrentVideoId(videoId);
     setAppStatus(AppStatus.SUCCESS);
     setShowProjectsSidebar(false);
+    setCurrentView('analysis');
 
     // Nota: No podem restaurar el File object, només l'anàlisi
     // L'usuari haurà de pujar de nou el vídeo si vol veure'l
     setVideoFile(null);
+  };
+
+  const handleDashboardNavigate = (view: 'upload' | 'projects' | 'comparison' | 'settings') => {
+    if (view === 'upload') {
+      setCurrentView('upload');
+    } else if (view === 'projects') {
+      setShowProjectsSidebar(true);
+    } else if (view === 'comparison') {
+      setShowComparison(true);
+    } else if (view === 'settings') {
+      setShowSettings(true);
+    }
   };
 
   return (
@@ -188,6 +204,16 @@ const App: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentView('dashboard')}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 ${currentView === 'dashboard' ? 'bg-blue-600' : 'bg-slate-800 hover:bg-slate-700'} border border-slate-600 rounded-lg text-white text-xs font-medium transition-colors`}
+                title="Dashboard"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                </svg>
+                <span className="hidden sm:inline">Dashboard</span>
+              </button>
               <button
                 onClick={() => setShowUserGuide(true)}
                 className="p-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 transition-colors"
@@ -234,24 +260,32 @@ const App: React.FC = () => {
       </header>
 
       <main className="px-3 sm:px-4 lg:px-6 py-4 relative">
-        {/* Projects Sidebar */}
-        {showProjectsSidebar && (
-          <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setShowProjectsSidebar(false)} />
+        {/* Dashboard View */}
+        {currentView === 'dashboard' && (
+          <Dashboard onNavigate={handleDashboardNavigate} />
         )}
-        <div
-          className={`fixed lg:absolute top-0 right-0 h-screen lg:h-auto w-80 lg:w-72 bg-slate-900 border-l lg:border lg:rounded-lg border-slate-700 z-50 lg:z-auto transition-transform lg:transition-none ${
-            showProjectsSidebar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
-          } ${!videoFile && appStatus === AppStatus.IDLE ? 'lg:block' : 'lg:hidden'}`}
-        >
-          <ProjectsManager
-            currentProjectId={currentProjectId}
-            onSelectProject={setCurrentProjectId}
-            onLoadVideo={handleLoadVideoFromProject}
-          />
-        </div>
 
-        {/* Video Uploader */}
-        {!videoFile && appStatus !== AppStatus.SUCCESS && (
+        {/* Upload & Analysis Views */}
+        {currentView !== 'dashboard' && (
+          <>
+            {/* Projects Sidebar */}
+            {showProjectsSidebar && (
+              <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setShowProjectsSidebar(false)} />
+            )}
+            <div
+              className={`fixed lg:absolute top-0 right-0 h-screen lg:h-auto w-80 lg:w-72 bg-slate-900 border-l lg:border lg:rounded-lg border-slate-700 z-50 lg:z-auto transition-transform lg:transition-none ${
+                showProjectsSidebar ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'
+              } ${!videoFile && appStatus === AppStatus.IDLE ? 'lg:block' : 'lg:hidden'}`}
+            >
+              <ProjectsManager
+                currentProjectId={currentProjectId}
+                onSelectProject={setCurrentProjectId}
+                onLoadVideo={handleLoadVideoFromProject}
+              />
+            </div>
+
+            {/* Video Uploader */}
+            {!videoFile && appStatus !== AppStatus.SUCCESS && (
           <div className="mb-8">
             <VideoUploader onVideoSelected={handleVideoSelected} status={appStatus} />
             {currentProjectId && (
@@ -308,18 +342,27 @@ const App: React.FC = () => {
                 videoFile={videoFile}
               />
 
-              {/* Upload New Video Button */}
-              <button
-                onClick={() => {
-                  setVideoFile(null);
-                  setAnalysisResult(null);
-                  setStructuredAnalysis(null);
-                  setAppStatus(AppStatus.IDLE);
-                }}
-                className="w-full px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
-              >
-                ↑ Pujar nou vídeo
-              </button>
+              {/* Action Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setCurrentView('dashboard')}
+                  className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 border border-blue-500 rounded-lg text-white text-sm font-medium transition-colors"
+                >
+                  ← Dashboard
+                </button>
+                <button
+                  onClick={() => {
+                    setVideoFile(null);
+                    setAnalysisResult(null);
+                    setStructuredAnalysis(null);
+                    setAppStatus(AppStatus.IDLE);
+                    setCurrentView('upload');
+                  }}
+                  className="flex-1 px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                >
+                  ↑ Pujar nou vídeo
+                </button>
+              </div>
             </div>
 
             {/* Right Column: Stats, Search & Analysis */}
@@ -349,6 +392,8 @@ const App: React.FC = () => {
               />
             </div>
           </div>
+        )}
+          </>
         )}
       </main>
 
