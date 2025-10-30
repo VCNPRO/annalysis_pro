@@ -228,16 +228,6 @@ const App: React.FC = () => {
                 </svg>
                 <span className="hidden lg:inline">Configuració</span>
               </button>
-              <button
-                onClick={() => setIsApiKeyModalOpen(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-xs font-medium transition-colors"
-                title="Configurar clau API"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-3.5 h-3.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z" />
-                </svg>
-                <span className="hidden lg:inline">Clau API</span>
-              </button>
             </div>
           </div>
         </div>

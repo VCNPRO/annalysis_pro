@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getCacheStats, clearAllCache, clearExpiredCache, getCachedVideos, removeCachedVideo } from '../services/cacheService';
 import { getStorageStats } from '../services/projectsService';
-import { ANALYSIS_LANGUAGES, getAnalysisLanguage, setAnalysisLanguage } from '../constants';
+import { ANALYSIS_LANGUAGES, getAnalysisLanguage, setAnalysisLanguage, getApiKey, setApiKey } from '../constants';
 
 interface SettingsPanelProps {
   isOpen: boolean;
@@ -10,11 +10,12 @@ interface SettingsPanelProps {
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'general' | 'cache' | 'storage'>('general');
+  const [activeTab, setActiveTab] = useState<'general' | 'cache' | 'storage' | 'api'>('general');
   const [cacheStats, setCacheStats] = useState(getCacheStats());
   const [storageStats, setStorageStats] = useState(getStorageStats());
   const [cachedVideos, setCachedVideos] = useState(getCachedVideos());
   const [currentLang, setCurrentLang] = useState(getAnalysisLanguage());
+  const [apiKeyInput, setApiKeyInput] = useState('');
 
   useEffect(() => {
     if (isOpen) {
@@ -99,7 +100,8 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
             {[
               { key: 'general', label: '⚙️ General', icon: '' },
               { key: 'cache', label: '💾 Cache', icon: '' },
-              { key: 'storage', label: '📊 Emmagatzematge', icon: '' }
+              { key: 'storage', label: '📊 Emmagatzematge', icon: '' },
+              { key: 'api', label: '🔑 API Key', icon: '' }
             ].map(tab => (
               <button
                 key={tab.key}
@@ -306,6 +308,146 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({ isOpen, onClose }) => {
                     <p className="text-xs text-blue-200/70">
                       Les dades es guarden al navegador (LocalStorage). El límit típic és de ~10MB.
                       Si s'omple, neteja projectes antics o cache per alliberar espai.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* API Tab */}
+          {activeTab === 'api' && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Configuració de Clau API</h3>
+                <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div className="flex-1">
+                      <p className="text-sm text-blue-300 font-medium mb-1">Sobre les claus API</p>
+                      <p className="text-xs text-blue-200/70 mb-2">
+                        Hi ha dues maneres d'usar Annalysis Pro:
+                      </p>
+                      <ul className="text-xs text-blue-200/70 space-y-1 ml-4 list-disc">
+                        <li><strong>Clau compartida</strong>: Si l'administrador ha configurat una clau a Vercel, l'aplicació la usa automàticament</li>
+                        <li><strong>Clau personal</strong>: Pots introduir la teva pròpia clau aquí per usar el teu compte de Google</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Current API Key Status */}
+                <div className="bg-slate-900/50 rounded-lg p-4 mb-4">
+                  <div className="text-sm text-slate-400 mb-2">Estat actual:</div>
+                  {(() => {
+                    const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+                    const hasEnvKey = envKey && envKey !== 'undefined' && envKey.trim() !== '';
+                    const localKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
+                    const hasLocalKey = localKey && localKey.trim() !== '';
+
+                    if (hasEnvKey) {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                          <span className="text-sm text-green-400 font-medium">Usant clau compartida de Vercel</span>
+                        </div>
+                      );
+                    } else if (hasLocalKey) {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                          <span className="text-sm text-blue-400 font-medium">Usant clau personal</span>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                          <span className="text-sm text-red-400 font-medium">No s'ha configurat cap clau API</span>
+                        </div>
+                      );
+                    }
+                  })()}
+                </div>
+
+                {/* API Key Input */}
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Clau personal de Google Gemini
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="password"
+                      value={apiKeyInput}
+                      onChange={(e) => setApiKeyInput(e.target.value)}
+                      placeholder="AIzaSy..."
+                      className="flex-1 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500"
+                    />
+                    <button
+                      onClick={() => {
+                        if (apiKeyInput.trim()) {
+                          setApiKey(apiKeyInput.trim());
+                          setApiKeyInput('');
+                          alert('✅ Clau API desada correctament');
+                        }
+                      }}
+                      disabled={!apiKeyInput.trim()}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white rounded-lg text-sm font-medium transition-colors"
+                    >
+                      Desar
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    💡 La teva clau personal es prioritzarà sobre la clau compartida (si n'hi ha una)
+                  </p>
+                </div>
+
+                {/* Clear Personal Key Button */}
+                {(() => {
+                  const localKey = typeof window !== 'undefined' ? localStorage.getItem('gemini_api_key') : null;
+                  const hasLocalKey = localKey && localKey.trim() !== '';
+
+                  if (hasLocalKey) {
+                    return (
+                      <button
+                        onClick={() => {
+                          if (confirm('Segur que vols esborrar la teva clau personal?')) {
+                            localStorage.removeItem('gemini_api_key');
+                            alert('✅ Clau personal esborrada');
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors"
+                      >
+                        Esborrar clau personal
+                      </button>
+                    );
+                  }
+                  return null;
+                })()}
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-slate-100 mb-4">Com obtenir una clau API</h3>
+                <ol className="text-sm text-slate-400 space-y-2 list-decimal ml-4">
+                  <li>Ves a <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300">Google AI Studio</a></li>
+                  <li>Inicia sessió amb el teu compte de Google</li>
+                  <li>Fes clic a "Get API Key" o "Create API Key"</li>
+                  <li>Copia la clau i enganxa-la aquí dalt</li>
+                </ol>
+              </div>
+
+              <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div className="flex-1">
+                    <p className="text-sm text-yellow-300 font-medium mb-1">Advertència sobre costos</p>
+                    <p className="text-xs text-yellow-200/70">
+                      Els costos d'ús de l'API s'acumularan al compte de Google associat a la clau.
+                      Google Gemini té un tier gratuït de 1.500 sol·licituds/dia.
                     </p>
                   </div>
                 </div>
