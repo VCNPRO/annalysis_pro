@@ -126,20 +126,20 @@ const AnalysisStats: React.FC<AnalysisStatsProps> = ({ structuredAnalysis, durat
   }
 
   return (
-    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
-      <h3 className="text-sm font-semibold text-slate-100 mb-3">📊 Estadístiques</h3>
+    <div className="bg-slate-800 rounded-md p-2 border border-slate-700">
+      <h3 className="text-xs font-semibold text-slate-100 mb-2">📊 Estadístiques</h3>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 gap-1.5">
         {stats.map((stat, idx) => (
           <div
             key={idx}
-            className="bg-slate-900/50 rounded-lg p-2 border border-slate-700 hover:border-slate-600 transition-colors"
+            className="bg-slate-900/50 rounded p-1.5 border border-slate-700 hover:border-slate-600 transition-colors"
           >
-            <div className="flex items-center gap-1.5 mb-0.5">
-              <span className="text-base">{stat.icon}</span>
+            <div className="flex items-center gap-1 mb-0.5">
+              <span className="text-sm">{stat.icon}</span>
               <span className="text-xs text-slate-400">{stat.label}</span>
             </div>
-            <p className={`text-sm font-bold ${stat.color}`}>
+            <p className={`text-xs font-bold ${stat.color}`}>
               {stat.value}
             </p>
           </div>
@@ -148,9 +148,9 @@ const AnalysisStats: React.FC<AnalysisStatsProps> = ({ structuredAnalysis, durat
 
       {/* Summary preview */}
       {structuredAnalysis.summary && (
-        <div className="mt-3 pt-3 border-t border-slate-700">
-          <h4 className="text-xs font-semibold text-slate-400 mb-1.5">RESUM</h4>
-          <p className="text-xs text-slate-300 line-clamp-3 leading-relaxed">
+        <div className="mt-2 pt-2 border-t border-slate-700">
+          <h4 className="text-xs font-semibold text-slate-400 mb-1">RESUM</h4>
+          <p className="text-xs text-slate-300 line-clamp-2 leading-snug">
             {structuredAnalysis.summary}
           </p>
         </div>

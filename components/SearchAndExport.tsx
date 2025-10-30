@@ -162,8 +162,8 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
   };
 
   return (
-    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700 space-y-3">
-      <h3 className="text-sm font-semibold text-slate-100">🔍 Cerca i Exporta</h3>
+    <div className="bg-slate-800 rounded-md p-2 border border-slate-700 space-y-2">
+      <h3 className="text-xs font-semibold text-slate-100">🔍 Cerca i Exporta</h3>
 
       {/* Search Bar */}
       <div className="relative">
@@ -203,7 +203,7 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
 
       {/* Search Results */}
       {searchQuery && (
-        <div className="space-y-1.5 max-h-48 overflow-y-auto">
+        <div className="space-y-1 max-h-40 overflow-y-auto">
           <p className="text-xs text-slate-400">
             {filteredResults.length} coincidències trobades
           </p>

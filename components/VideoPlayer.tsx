@@ -124,9 +124,9 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, []);
 
   return (
-    <div className="bg-slate-900 rounded-lg overflow-hidden shadow-xl border border-slate-700">
+    <div className="bg-slate-900 rounded-md overflow-hidden shadow-lg border border-slate-700">
       {/* Video Display */}
-      <div className="relative bg-black aspect-video">
+      <div className="relative bg-black aspect-video max-h-[400px]">
         <video
           ref={videoRef}
           src={videoUrl}
@@ -148,16 +148,16 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       </div>
 
       {/* Controls */}
-      <div className="p-4 bg-slate-800">
+      <div className="p-2 bg-slate-800">
         {/* Progress Bar */}
-        <div className="mb-4">
+        <div className="mb-2">
           <input
             type="range"
             min="0"
             max={duration || 0}
             value={currentTime}
             onChange={handleSeek}
-            className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
             style={{
               background: `linear-gradient(to right, #3b82f6 0%, #3b82f6 ${(currentTime / duration) * 100}%, #475569 ${(currentTime / duration) * 100}%, #475569 100%)`
             }}
@@ -166,28 +166,28 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
         <div className="flex items-center justify-between">
           {/* Playback Controls */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <button
               onClick={skipBackward}
-              className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors"
               title="Retrocedir 5s"
             >
-              <svg className="w-5 h-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"/>
               </svg>
             </button>
 
             <button
               onClick={togglePlay}
-              className="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+              className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
               title={isPlaying ? 'Pausar' : 'Reproducir'}
             >
               {isPlaying ? (
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
                 </svg>
               ) : (
-                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M8 5v14l11-7z"/>
                 </svg>
               )}
@@ -195,23 +195,23 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
 
             <button
               onClick={skipForward}
-              className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors"
               title="Avançar 5s"
             >
-              <svg className="w-5 h-5 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/>
               </svg>
             </button>
 
             {/* Time Display */}
-            <div className="text-sm text-slate-300 font-mono ml-2">
+            <div className="text-xs text-slate-300 font-mono ml-1.5">
               {formatTime(currentTime)} / {formatTime(duration)}
             </div>
           </div>
 
           {/* Volume Control */}
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+          <div className="flex items-center gap-1.5">
+            <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
               <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
             </svg>
             <input
@@ -221,7 +221,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
               step="0.1"
               value={volume}
               onChange={handleVolumeChange}
-              className="w-24 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              className="w-16 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
             />
           </div>
         </div>
