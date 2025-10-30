@@ -1,6 +1,6 @@
 // services/geminiService.ts
 import { GoogleGenAI, Type } from '@google/genai';
-import { getApiKey, GEMINI_MODEL_NAME } from '../constants';
+import { getApiKey, GEMINI_MODEL_NAME, getAnalysisLanguage, ANALYSIS_LANGUAGES } from '../constants';
 import { GenerateContentParameters, Part } from '@google/genai';
 
 /**
@@ -56,7 +56,10 @@ export const generateStructuredVideoAnalysis = async (
       });
     });
 
-    const detailedPrompt = `Ets un analista de vídeo expert. Analitza aquests frames de vídeo i proporciona una descripció completa i estructurada en format JSON.
+    const currentLang = getAnalysisLanguage();
+    const langPrompt = (ANALYSIS_LANGUAGES as any)[currentLang]?.prompt || 'en català';
+
+    const detailedPrompt = `Ets un analista de vídeo expert. Analitza aquests frames de vídeo i proporciona una descripció completa i estructurada en format JSON ${langPrompt}.
 
 La resposta ha de ser un objecte JSON amb les següents propietats. Per a les propietats que requereixen dades estructurades (objects, people, actions, etc.), proporciona una cadena JSON vàlida com a valor d'aquesta propietat:
 
