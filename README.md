@@ -64,18 +64,44 @@ Plataforma professional d'anàlisi de vídeo impulsada per Intel·ligència Arti
 
 ## 🔑 Configuració de la clau API
 
-Després del desplegament:
+### Opció A: Clau compartida (tothom usa la mateixa) - RECOMANADA
+
+Configura una variable d'entorn a Vercel perquè TOTS els usuaris puguin usar l'aplicació sense configurar res:
+
+1. **Obtén una clau API gratuïta:**
+   - Ves a [Google AI Studio](https://aistudio.google.com/)
+   - Inicia sessió amb Google
+   - Fes clic a "Get API Key"
+   - Copia la clau
+
+2. **Configura-la a Vercel:**
+   - Ves a [Vercel Dashboard](https://vercel.com/dashboard)
+   - Selecciona el projecte `annalysis-pro`
+   - Ves a: **Settings** → **Environment Variables**
+   - Afegeix:
+     - **Name**: `VITE_GEMINI_API_KEY`
+     - **Value**: (enganxa la teva clau API)
+     - **Environments**: Marca Production, Preview, Development
+   - Fes clic a **"Save"**
+
+3. **Redeploy l'aplicació:**
+   - Ves a: **Deployments**
+   - Fes clic als 3 punts del desplegament més recent
+   - Fes clic a **"Redeploy"**
+
+4. **Ja està!** Ara qualsevol que obri l'aplicació pot usar-la immediatament sense configurar res
+
+⚠️ **Advertència:** Tots els costos s'acumularan al teu compte de Google
+
+### Opció B: Clau personal (cada usuari introdueix la seva)
+
+Si NO configures la variable d'entorn a Vercel:
 
 1. Obre l'aplicació desplegada
 2. Fes clic a "Clau API" a la capçalera
 3. Introdueix la teva clau API de Google Gemini
 4. Fes clic a "Desar"
-
-**Obtenir clau API gratuïta:**
-- Ves a [Google AI Studio](https://aistudio.google.com/)
-- Inicia sessió amb Google
-- Fes clic a "Get API Key"
-- Copia la clau
+5. Es guardarà al teu navegador (LocalStorage)
 
 ## 💰 Costos
 

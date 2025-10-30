@@ -2,11 +2,22 @@
 
 export const GEMINI_MODEL_NAME = 'gemini-2.5-pro'; // S'ha actualitzat a un model més potent
 
-// Get API_KEY from localStorage instead of environment variable
+// Get API_KEY - Priority: environment variable (shared) > localStorage (personal)
 export const getApiKey = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('gemini_api_key');
+  // 1. Check if there's a shared API key from environment variables (Vercel)
+  const envKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (envKey && envKey !== 'undefined' && envKey.trim() !== '') {
+    return envKey;
   }
+
+  // 2. If no shared key, check localStorage for user's personal key
+  if (typeof window !== 'undefined') {
+    const localKey = localStorage.getItem('gemini_api_key');
+    if (localKey && localKey.trim() !== '') {
+      return localKey;
+    }
+  }
+
   return null;
 };
 
