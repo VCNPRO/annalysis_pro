@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StructuredVideoAnalysis } from '../services/geminiService';
 
 interface TimelineEvent {
@@ -13,15 +13,91 @@ interface MetadataTimelineProps {
   duration: number;
   currentTime: number;
   onSeek: (time: number) => void;
+  videoFile?: File | null;
 }
 
 const MetadataTimeline: React.FC<MetadataTimelineProps> = ({
   structuredAnalysis,
   duration,
   currentTime,
-  onSeek
+  onSeek,
+  videoFile
 }) => {
-  const [hoveredEvent, setHoveredEvent] = React.useState<TimelineEvent | null>(null);
+  const [hoveredEvent, setHoveredEvent] = useState<TimelineEvent | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{ x: number; timestamp: number } | null>(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Initialize hidden video element for thumbnail extraction
+  useEffect(() => {
+    if (!videoFile) return;
+
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.src = URL.createObjectURL(videoFile);
+    videoRef.current = video;
+
+    const canvas = document.createElement('canvas');
+    canvasRef.current = canvas;
+
+    return () => {
+      if (video.src) URL.revokeObjectURL(video.src);
+      video.remove();
+      canvas.remove();
+    };
+  }, [videoFile]);
+
+  // Extract thumbnail when hovering
+  useEffect(() => {
+    if (!hoverPosition || !videoRef.current || !canvasRef.current || !duration) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const extractFrame = () => {
+      video.currentTime = hoverPosition.timestamp;
+    };
+
+    const onSeeked = () => {
+      try {
+        canvas.width = 160;
+        canvas.height = 90;
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const thumbnail = canvas.toDataURL('image/jpeg', 0.6);
+        setThumbnailPreview(thumbnail);
+      } catch (error) {
+        console.error('Error extracting thumbnail:', error);
+      }
+    };
+
+    video.addEventListener('seeked', onSeeked);
+    extractFrame();
+
+    return () => {
+      video.removeEventListener('seeked', onSeeked);
+    };
+  }, [hoverPosition, duration]);
+
+  const handleTimelineHover = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!timelineRef.current || !duration) return;
+
+    const rect = timelineRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percentage = x / rect.width;
+    const timestamp = percentage * duration;
+
+    setHoverPosition({ x, timestamp: Math.max(0, Math.min(timestamp, duration)) });
+  };
+
+  const handleTimelineLeave = () => {
+    setHoverPosition(null);
+    setThumbnailPreview(null);
+  };
 
   // Parsear eventos del análisis estructurado
   const parseEvents = (): TimelineEvent[] => {
@@ -162,7 +238,20 @@ const MetadataTimeline: React.FC<MetadataTimelineProps> = ({
                   {getEventLabel(type)}
                 </div>
 
-                <div className="flex-1 relative h-8 bg-slate-900 rounded overflow-hidden">
+                <div
+                  ref={type === 'object' ? timelineRef : null}
+                  className="flex-1 relative h-8 bg-slate-900 rounded overflow-hidden cursor-pointer"
+                  onMouseMove={type === 'object' ? handleTimelineHover : undefined}
+                  onMouseLeave={type === 'object' ? handleTimelineLeave : undefined}
+                  onClick={(e) => {
+                    if (!timelineRef.current) return;
+                    const rect = timelineRef.current.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const percentage = x / rect.width;
+                    const timestamp = percentage * duration;
+                    onSeek(timestamp);
+                  }}
+                >
                   {/* Current time indicator */}
                   <div
                     className="absolute top-0 bottom-0 w-0.5 bg-white z-10"
@@ -177,7 +266,10 @@ const MetadataTimeline: React.FC<MetadataTimelineProps> = ({
                         key={`${type}-${idx}`}
                         className={`absolute top-0 bottom-0 w-1 ${getEventColor(type)} cursor-pointer hover:w-2 transition-all`}
                         style={{ left: `${position}%` }}
-                        onClick={() => onSeek(event.timestamp)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSeek(event.timestamp);
+                        }}
                         onMouseEnter={() => setHoveredEvent(event)}
                         onMouseLeave={() => setHoveredEvent(null)}
                         title={`${event.label} - ${formatTime(event.timestamp)}`}
@@ -204,6 +296,39 @@ const MetadataTimeline: React.FC<MetadataTimelineProps> = ({
               {hoveredEvent.confidence && (
                 <div className="text-slate-400">Confiança: {(hoveredEvent.confidence * 100).toFixed(0)}%</div>
               )}
+            </div>
+          )}
+
+          {/* Thumbnail preview on hover */}
+          {hoverPosition && thumbnailPreview && timelineRef.current && (
+            <div
+              className="fixed z-50 pointer-events-none"
+              style={{
+                left: `${timelineRef.current.getBoundingClientRect().left + hoverPosition.x}px`,
+                top: `${timelineRef.current.getBoundingClientRect().top - 110}px`,
+                transform: 'translateX(-50%)'
+              }}
+            >
+              <div className="bg-slate-900 border-2 border-blue-500 rounded-lg shadow-xl overflow-hidden">
+                <img
+                  src={thumbnailPreview}
+                  alt="Preview"
+                  className="w-40 h-auto"
+                />
+                <div className="px-2 py-1 bg-slate-800 text-xs text-slate-300 text-center font-mono">
+                  {formatTime(hoverPosition.timestamp)}
+                </div>
+              </div>
+              {/* Arrow */}
+              <div
+                className="absolute left-1/2 -translate-x-1/2 w-0 h-0"
+                style={{
+                  borderLeft: '6px solid transparent',
+                  borderRight: '6px solid transparent',
+                  borderTop: '6px solid #3b82f6',
+                  bottom: '-6px'
+                }}
+              />
             </div>
           )}
         </div>
