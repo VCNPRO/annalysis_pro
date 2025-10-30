@@ -14,11 +14,14 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   onSeek
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(1);
   const [videoUrl, setVideoUrl] = useState<string>('');
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
     // Crear URL del vídeo
@@ -103,6 +106,47 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
     video.currentTime = Math.min(duration, video.currentTime + 5);
   };
 
+  const toggleFullscreen = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen().then(() => {
+        setIsFullscreen(true);
+      }).catch((err) => {
+        console.error('Error intentant entrar a pantalla completa:', err);
+      });
+    } else {
+      document.exitFullscreen().then(() => {
+        setIsFullscreen(false);
+      });
+    }
+  };
+
+  const changePlaybackRate = () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const rates = [0.5, 0.75, 1, 1.25, 1.5, 2];
+    const currentIndex = rates.indexOf(playbackRate);
+    const nextIndex = (currentIndex + 1) % rates.length;
+    const newRate = rates[nextIndex];
+
+    video.playbackRate = newRate;
+    setPlaybackRate(newRate);
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
@@ -124,7 +168,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   }, []);
 
   return (
-    <div className="bg-slate-900 rounded-md overflow-hidden shadow-lg border border-slate-700">
+    <div ref={containerRef} className="bg-slate-900 rounded-md overflow-hidden shadow-lg border border-slate-700">
       {/* Video Display */}
       <div className="relative bg-black aspect-video max-h-[280px]">
         <video
@@ -209,20 +253,49 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
             </div>
           </div>
 
-          {/* Volume Control */}
-          <div className="flex items-center gap-1.5">
-            <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
-            </svg>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.1"
-              value={volume}
-              onChange={handleVolumeChange}
-              className="w-16 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-            />
+          {/* Right Controls */}
+          <div className="flex items-center gap-2">
+            {/* Playback Speed */}
+            <button
+              onClick={changePlaybackRate}
+              className="px-2 py-1 hover:bg-slate-700 rounded-lg transition-colors text-xs font-mono text-slate-300"
+              title="Velocitat de reproducció"
+            >
+              {playbackRate}x
+            </button>
+
+            {/* Volume Control */}
+            <div className="flex items-center gap-1.5">
+              <svg className="w-4 h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+              </svg>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.1"
+                value={volume}
+                onChange={handleVolumeChange}
+                className="w-16 h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+              />
+            </div>
+
+            {/* Fullscreen */}
+            <button
+              onClick={toggleFullscreen}
+              className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors"
+              title={isFullscreen ? 'Sortir de pantalla completa' : 'Pantalla completa'}
+            >
+              {isFullscreen ? (
+                <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z"/>
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                </svg>
+              )}
+            </button>
           </div>
         </div>
       </div>

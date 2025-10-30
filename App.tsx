@@ -193,12 +193,12 @@ const App: React.FC = () => {
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14">
             <div className="flex items-center gap-3">
-              <div className="text-xl font-bold text-blue-500">🎬</div>
-              <div className="flex items-baseline gap-1.5">
-                <h1 className="text-base font-bold text-slate-100 tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
+              <div className="text-2xl font-bold text-blue-500">🎬</div>
+              <div className="flex items-baseline gap-2">
+                <h1 className="text-xl font-bold text-slate-100 tracking-wider" style={{ fontFamily: "'Orbitron', sans-serif" }}>
                   annalysis pro
                 </h1>
-                <span className="text-xs text-slate-500 font-normal">
+                <span className="text-sm text-slate-500 font-normal">
                   trabajando para
                 </span>
               </div>
