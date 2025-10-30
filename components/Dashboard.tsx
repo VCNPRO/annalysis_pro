@@ -72,15 +72,50 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
     { id: 5, action: 'Comparació realitzada', project: 'Anàlisi A/B', time: '4 h', icon: '⚖️' },
   ];
 
+  const [activeTab, setActiveTab] = React.useState<'overview' | 'stats' | 'activity'>('overview');
+
   return (
-    <div className="space-y-4">
-      {/* Welcome Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg p-4 text-white">
-        <h1 className="text-2xl font-bold mb-1">Benvingut a Annalysis Pro</h1>
-        <p className="text-sm text-blue-100">Plataforma professional d'anàlisi de vídeo amb Intel·ligència Artificial</p>
+    <div className="space-y-3">
+      {/* Tabs Navigation */}
+      <div className="border-b border-slate-700">
+        <div className="flex gap-1">
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+              activeTab === 'overview'
+                ? 'bg-slate-800 text-blue-400 border-b-2 border-blue-500'
+                : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+            }`}
+          >
+            📊 Vista General
+          </button>
+          <button
+            onClick={() => setActiveTab('stats')}
+            className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+              activeTab === 'stats'
+                ? 'bg-slate-800 text-blue-400 border-b-2 border-blue-500'
+                : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+            }`}
+          >
+            📈 Estadístiques
+          </button>
+          <button
+            onClick={() => setActiveTab('activity')}
+            className={`px-4 py-2 text-sm font-medium transition-colors rounded-t-lg ${
+              activeTab === 'activity'
+                ? 'bg-slate-800 text-blue-400 border-b-2 border-blue-500'
+                : 'text-slate-400 hover:text-slate-300 hover:bg-slate-800/50'
+            }`}
+          >
+            🕐 Activitat
+          </button>
+        </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* Overview Tab */}
+      {activeTab === 'overview' && (
+        <div className="space-y-3">
+          {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 hover:border-blue-500 transition-colors">
           <div className="flex items-center justify-between mb-1">
@@ -165,7 +200,39 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* System Status */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-xs font-medium text-white">API Status</span>
+              </div>
+              <div className="text-xs text-slate-400">Operacional · 99.9% uptime</div>
+            </div>
+
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-green-500"></div>
+                <span className="text-xs font-medium text-white">Model IA</span>
+              </div>
+              <div className="text-xs text-slate-400">Gemini 2.0 Flash · Actiu</div>
+            </div>
+
+            <div className="bg-slate-800 border border-slate-700 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                <span className="text-xs font-medium text-white">Cache</span>
+              </div>
+              <div className="text-xs text-slate-400">Optimitzada · 30 dies</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Tab */}
+      {activeTab === 'stats' && (
+        <div className="space-y-3">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Weekly Analysis Chart */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
           <h2 className="text-lg font-bold text-white mb-3">📈 Anàlisis aquesta setmana</h2>
@@ -208,12 +275,16 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
             </PieChart>
           </ResponsiveContainer>
         </div>
-      </div>
+          </div>
+        </div>
+      )}
 
-      {/* Recent Activity */}
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-        <h2 className="text-lg font-bold text-white mb-3">🕐 Activitat recent</h2>
-        <div className="space-y-2">
+      {/* Activity Tab */}
+      {activeTab === 'activity' && (
+        <div className="space-y-3">
+          <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
+            <h2 className="text-lg font-bold text-white mb-3">🕐 Activitat recent</h2>
+            <div className="space-y-2">
           {recentActivity.map((activity) => (
             <div
               key={activity.id}
@@ -229,35 +300,10 @@ const Dashboard: React.FC<DashboardProps> = ({ onNavigate }) => {
               <span className="text-xs text-slate-500">{activity.time}</span>
             </div>
           ))}
-        </div>
-      </div>
-
-      {/* System Status */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm font-medium text-white">API Status</span>
+            </div>
           </div>
-          <div className="text-xs text-slate-400">Operacional · 99.9% uptime</div>
         </div>
-
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-2 h-2 rounded-full bg-green-500"></div>
-            <span className="text-sm font-medium text-white">Model IA</span>
-          </div>
-          <div className="text-xs text-slate-400">Gemini 2.0 Flash · Actiu</div>
-        </div>
-
-        <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-            <span className="text-sm font-medium text-white">Cache</span>
-          </div>
-          <div className="text-xs text-slate-400">Optimitzada · 30 dies</div>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
