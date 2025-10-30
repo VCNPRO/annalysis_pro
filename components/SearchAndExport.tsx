@@ -1,9 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import { StructuredVideoAnalysis } from '../services/geminiService';
+import { enrichAnalysisData, exportAsJSON, exportAsTXT, exportAsPDF } from '../services/exportService';
 
 interface SearchAndExportProps {
   structuredAnalysis: StructuredVideoAnalysis | null;
   onSeekToResult: (timestamp: number) => void;
+  videoFileName: string;
+  videoDuration: number;
 }
 
 interface SearchResult {
@@ -13,7 +16,7 @@ interface SearchResult {
   confidence?: number;
 }
 
-const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, onSeekToResult }) => {
+const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, onSeekToResult, videoFileName, videoDuration }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<string[]>(['object', 'person', 'text', 'action']);
 
@@ -119,64 +122,22 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
     );
   };
 
-  const exportAsJSON = () => {
+  const handleExportJSON = () => {
     if (!structuredAnalysis) return;
-
-    const dataStr = JSON.stringify(structuredAnalysis, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `analysis_${new Date().getTime()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const enrichedData = enrichAnalysisData(structuredAnalysis, videoFileName, videoDuration);
+    exportAsJSON(enrichedData);
   };
 
-  const exportAsText = () => {
+  const handleExportTXT = () => {
     if (!structuredAnalysis) return;
+    const enrichedData = enrichAnalysisData(structuredAnalysis, videoFileName, videoDuration);
+    exportAsTXT(enrichedData);
+  };
 
-    let text = '=== ANÀLISI DE VÍDEO ===\n\n';
-    text += `RESUM:\n${structuredAnalysis.summary}\n\n`;
-
-    try {
-      const objects = JSON.parse(structuredAnalysis.objects);
-      if (Array.isArray(objects) && objects.length > 0) {
-        text += 'OBJECTES DETECTATS:\n';
-        objects.forEach((obj: any) => {
-          text += `- ${obj.name || 'Objecte'}: ${obj.description || ''}\n`;
-        });
-        text += '\n';
-      }
-    } catch (e) {}
-
-    try {
-      const actions = JSON.parse(structuredAnalysis.actions);
-      if (Array.isArray(actions) && actions.length > 0) {
-        text += 'ACCIONS:\n';
-        actions.forEach((action: any) => {
-          text += `- [${action.timestamp_approx || ''}] ${action.description || ''}\n`;
-        });
-        text += '\n';
-      }
-    } catch (e) {}
-
-    try {
-      const textContent = JSON.parse(structuredAnalysis.textContent);
-      if (Array.isArray(textContent) && textContent.length > 0) {
-        text += 'TEXT EN PANTALLA:\n';
-        textContent.forEach((t: any) => {
-          text += `- ${t.content || ''}\n`;
-        });
-      }
-    } catch (e) {}
-
-    const dataBlob = new Blob([text], { type: 'text/plain' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `analysis_${new Date().getTime()}.txt`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const handleExportPDF = () => {
+    if (!structuredAnalysis) return;
+    const enrichedData = enrichAnalysisData(structuredAnalysis, videoFileName, videoDuration);
+    exportAsPDF(enrichedData);
   };
 
   const getTypeIcon = (type: string) => {
@@ -282,12 +243,13 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
 
       {/* Export Buttons */}
       <div className="pt-4 border-t border-slate-700 space-y-2">
-        <p className="text-xs text-slate-400 mb-2">Exportar resultats:</p>
-        <div className="grid grid-cols-2 gap-2">
+        <p className="text-xs text-slate-400 mb-2">📥 Exportar resultats amb dades estructurades:</p>
+        <div className="grid grid-cols-3 gap-2">
           <button
-            onClick={exportAsJSON}
+            onClick={handleExportJSON}
             disabled={!structuredAnalysis}
-            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            title="Exportar com a JSON estructurat amb metadades completes"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -295,16 +257,31 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
             JSON
           </button>
           <button
-            onClick={exportAsText}
+            onClick={handleExportTXT}
             disabled={!structuredAnalysis}
-            className="px-3 py-2 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-600 text-slate-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            title="Exportar com a text formatat amb timeline"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
             TXT
           </button>
+          <button
+            onClick={handleExportPDF}
+            disabled={!structuredAnalysis}
+            className="px-3 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            title="Exportar com a PDF professional per impressió"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+            </svg>
+            PDF
+          </button>
         </div>
+        <p className="text-xs text-slate-500 mt-2">
+          ✨ Totes les exportacions inclouen: metadades, estadístiques, timeline d'esdeveniments, i dades estructurades amb timestamps
+        </p>
       </div>
     </div>
   );

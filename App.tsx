@@ -170,6 +170,8 @@ const App: React.FC = () => {
               <SearchAndExport
                 structuredAnalysis={structuredAnalysis}
                 onSeekToResult={handleSeekFromTimeline}
+                videoFileName={videoFile?.name || 'video'}
+                videoDuration={duration}
               />
 
               {/* Detailed Analysis Results */}
