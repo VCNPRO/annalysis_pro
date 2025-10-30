@@ -221,26 +221,26 @@ const MetadataTimeline: React.FC<MetadataTimelineProps> = ({
   const eventTypes: TimelineEvent['type'][] = ['object', 'person', 'text', 'action'];
 
   return (
-    <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 mt-4">
-      <h3 className="text-sm font-semibold text-slate-300 mb-3">Timeline de Metadades</h3>
+    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700">
+      <h3 className="text-xs font-semibold text-slate-300 mb-2">Timeline de Metadades</h3>
 
       {duration === 0 ? (
-        <p className="text-sm text-slate-500 italic">Esperant vídeo...</p>
+        <p className="text-xs text-slate-500 italic">Esperant vídeo...</p>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-2">
           {eventTypes.map((type) => {
             const typeEvents = events.filter(e => e.type === type);
             if (typeEvents.length === 0) return null;
 
             return (
               <div key={type} className="flex items-center gap-2">
-                <div className="text-xs text-slate-400 w-24 flex-shrink-0">
+                <div className="text-xs text-slate-400 w-20 flex-shrink-0">
                   {getEventLabel(type)}
                 </div>
 
                 <div
                   ref={type === 'object' ? timelineRef : null}
-                  className="flex-1 relative h-8 bg-slate-900 rounded overflow-hidden cursor-pointer"
+                  className="flex-1 relative h-6 bg-slate-900 rounded overflow-hidden cursor-pointer"
                   onMouseMove={type === 'object' ? handleTimelineHover : undefined}
                   onMouseLeave={type === 'object' ? handleTimelineLeave : undefined}
                   onClick={(e) => {

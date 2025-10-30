@@ -162,8 +162,8 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
   };
 
   return (
-    <div className="bg-slate-800 rounded-lg p-4 border border-slate-700 space-y-4">
-      <h3 className="text-lg font-semibold text-slate-100">🔍 Cerca i Exporta</h3>
+    <div className="bg-slate-800 rounded-lg p-3 border border-slate-700 space-y-3">
+      <h3 className="text-sm font-semibold text-slate-100">🔍 Cerca i Exporta</h3>
 
       {/* Search Bar */}
       <div className="relative">
@@ -172,15 +172,15 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Cerca en l'anàlisi..."
-          className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-1.5 text-sm bg-slate-900 border border-slate-700 rounded-lg text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <svg className="absolute right-3 top-2.5 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg className="absolute right-2.5 top-2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-1.5">
         {[
           { key: 'object', label: '🔷 Objectes' },
           { key: 'person', label: '👤 Persones' },
@@ -190,7 +190,7 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
           <button
             key={filter.key}
             onClick={() => toggleFilter(filter.key)}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+            className={`px-2 py-1 rounded-lg text-xs font-medium transition-colors ${
               activeFilters.includes(filter.key)
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-slate-400 hover:bg-slate-600'
@@ -203,14 +203,14 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
 
       {/* Search Results */}
       {searchQuery && (
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-1.5 max-h-48 overflow-y-auto">
           <p className="text-xs text-slate-400">
             {filteredResults.length} coincidències trobades
           </p>
           {filteredResults.map((result, idx) => (
             <div
               key={idx}
-              className={`p-3 bg-slate-900/50 rounded-lg border cursor-pointer hover:bg-slate-900 transition-colors ${
+              className={`p-2 bg-slate-900/50 rounded-lg border cursor-pointer hover:bg-slate-900 transition-colors ${
                 result.timestamp !== undefined ? 'cursor-pointer' : ''
               }`}
               onClick={() => result.timestamp !== undefined && onSeekToResult(result.timestamp)}
@@ -242,13 +242,13 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
       )}
 
       {/* Export Buttons */}
-      <div className="pt-4 border-t border-slate-700 space-y-2">
-        <p className="text-xs text-slate-400 mb-2">📥 Exportar resultats amb dades estructurades:</p>
-        <div className="grid grid-cols-3 gap-2">
+      <div className="pt-3 border-t border-slate-700 space-y-2">
+        <p className="text-xs text-slate-400 mb-1.5">📥 Exportar resultats:</p>
+        <div className="grid grid-cols-3 gap-1.5">
           <button
             onClick={handleExportJSON}
             disabled={!structuredAnalysis}
-            className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-2 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
             title="Exportar com a JSON estructurat amb metadades completes"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -259,7 +259,7 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
           <button
             onClick={handleExportTXT}
             disabled={!structuredAnalysis}
-            className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-2 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
             title="Exportar com a text formatat amb timeline"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -270,7 +270,7 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
           <button
             onClick={handleExportPDF}
             disabled={!structuredAnalysis}
-            className="px-3 py-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+            className="px-2 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 disabled:text-slate-600 text-white rounded-lg text-xs font-medium transition-colors flex items-center justify-center gap-1.5"
             title="Exportar com a PDF professional per impressió"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -279,8 +279,8 @@ const SearchAndExport: React.FC<SearchAndExportProps> = ({ structuredAnalysis, o
             PDF
           </button>
         </div>
-        <p className="text-xs text-slate-500 mt-2">
-          ✨ Totes les exportacions inclouen: metadades, estadístiques, timeline d'esdeveniments, i dades estructurades amb timestamps
+        <p className="text-xs text-slate-500 mt-1.5 leading-relaxed">
+          ✨ Totes les exportacions inclouen metadades, estadístiques i timestamps
         </p>
       </div>
     </div>

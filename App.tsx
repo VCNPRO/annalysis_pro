@@ -243,7 +243,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="px-4 sm:px-6 lg:px-8 py-8 relative">
+      <main className="px-4 sm:px-6 lg:px-8 py-6 relative">
         {/* Projects Sidebar */}
         {showProjectsSidebar && (
           <div className="fixed inset-0 bg-black/50 z-40 lg:hidden" onClick={() => setShowProjectsSidebar(false)} />
@@ -286,12 +286,12 @@ const App: React.FC = () => {
 
         {/* Cache Indicator */}
         {usedCache && appStatus === AppStatus.SUCCESS && (
-          <div className="mt-4 bg-green-500/10 border border-green-500/30 rounded-lg p-3">
+          <div className="mb-3 bg-green-500/10 border border-green-500/30 rounded-lg p-2">
             <div className="flex items-center gap-2 justify-center">
-              <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <span className="text-sm text-green-400 font-medium">
+              <span className="text-xs text-green-400 font-medium">
                 Anàlisi carregada des de la cache (instantània)
               </span>
             </div>
@@ -300,9 +300,9 @@ const App: React.FC = () => {
 
         {/* Video Player & Analysis */}
         {videoFile && appStatus !== AppStatus.LOADING && (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
             {/* Left Column: Video Player & Timeline */}
-            <div className="lg:col-span-7 space-y-4">
+            <div className="lg:col-span-8 space-y-3">
               <VideoPlayer
                 videoFile={videoFile}
                 onTimeUpdate={setCurrentTime}
@@ -326,14 +326,14 @@ const App: React.FC = () => {
                   setStructuredAnalysis(null);
                   setAppStatus(AppStatus.IDLE);
                 }}
-                className="w-full px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
+                className="w-full px-3 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-slate-300 text-sm font-medium transition-colors"
               >
                 ↑ Pujar nou vídeo
               </button>
             </div>
 
             {/* Right Column: Stats, Search & Analysis */}
-            <div className="lg:col-span-5 space-y-4">
+            <div className="lg:col-span-4 space-y-3">
               {/* Statistics */}
               <AnalysisStats
                 structuredAnalysis={structuredAnalysis}
@@ -362,10 +362,10 @@ const App: React.FC = () => {
         )}
       </main>
 
-      <footer className="bg-slate-900 border-t border-slate-700 mt-12">
-        <div className="px-4 sm:px-6 lg:px-8 py-6">
-          <p className="text-center text-slate-500 text-sm">
-            Impulsat per Google Gemini AI · Annalysis Pro Enterprise
+      <footer className="bg-slate-900 border-t border-slate-700 mt-8">
+        <div className="px-4 sm:px-6 lg:px-8 py-4">
+          <p className="text-center text-slate-500 text-xs">
+            Impulsat per Google Gemini AI · Annalysis Pro
           </p>
         </div>
       </footer>

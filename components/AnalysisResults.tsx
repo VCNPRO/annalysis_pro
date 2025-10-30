@@ -20,14 +20,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border-b border-slate-700 py-3">
+    <div className="border-b border-slate-700 py-2">
       <button
         className="flex justify-between items-center w-full text-left font-semibold text-slate-200 hover:text-blue-400 transition-colors duration-200 focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span className="text-sm">{title}</span>
+        <span className="text-xs">{title}</span>
         <svg
-          className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -36,7 +36,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({ title, children
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
         </svg>
       </button>
-      {isOpen && <div className="mt-3 pl-2 border-l-2 border-blue-500">{children}</div>}
+      {isOpen && <div className="mt-2 pl-2 border-l-2 border-blue-500">{children}</div>}
     </div>
   );
 };
@@ -90,8 +90,8 @@ const AnalysisResults: React.FC<AnalysisResultsProps> = ({ results, structuredAn
   }
 
   return (
-    <div className="p-6 bg-slate-800 rounded-lg shadow-xl border border-slate-700 max-h-[calc(100vh-12rem)] overflow-y-auto">
-      <h2 className="text-lg font-semibold mb-4 text-slate-100 border-b border-slate-700 pb-2">📊 Resultats de l'Anàlisi</h2>
+    <div className="p-4 bg-slate-800 rounded-lg shadow-xl border border-slate-700 max-h-[calc(100vh-12rem)] overflow-y-auto">
+      <h2 className="text-sm font-semibold mb-3 text-slate-100 border-b border-slate-700 pb-2">📊 Resultats de l'Anàlisi</h2>
 
       {results?.frames.length > 0 && (
         <CollapsibleSection title="Frames clau extrets" defaultOpen={true}>
